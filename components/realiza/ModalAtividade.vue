@@ -1,0 +1,159 @@
+<template>
+    <div class="flex flex-column h-screen">
+        <div class="flex justify-content-end">
+            <RealizaBtn label="CRIAR ATIVIDADE" icon="pi pi-plus" @click="visible = true"/>
+        </div>
+        <div v-if="atividades.length > 0" v-for="atividade in atividades" :key="atividade">
+            <Card >
+                <template #content>
+                    <div style="background-color: #a3a0a0; color: black;" class="flex justify-content-between p-3 mb-5">
+                        <span>Status: {{atividade.status}}</span>
+                        <span>Responsável: {{atividade.colaborador}}</span>
+                    </div>
+                    Descrição:
+                    <p v-html="atividade.descricao.value"/>
+                </template>
+            </Card>
+        </div>
+        <Dialog v-model:visible="visible" modal :style="{ width: '80vw' }">
+            <template #header>
+                <div class="inline-flex align-items-center justify-content-center gap-2">
+                    <strong style="letter-spacing: 0.3px;">ATIVIDADE COOPERADO: EMILY JULY GOMES DOMINGOS</strong>
+                </div>
+            </template>
+            <span class="info-title">Informações da Atividade</span>
+            <div class="info-container">
+                <div class="flex flex-column">
+                    <label style="font-size: 12px">Colaborador</label>
+                    <InputText v-model="data.colaborador" type="text" class="flex-auto" autocomplete="off"
+                               size="small"/>
+                </div>
+                <div class="flex w-full justify-content-between mt-3">
+                    <div class="flex flex-column">
+                        <label style="font-size: 12px">Tipo</label>
+                        <InputText v-model="data.tipo" type="text" class="flex-auto" autocomplete="off" size="small"/>
+                    </div>
+                    <div class="flex flex-column">
+                        <label style="font-size: 12px">Status</label>
+                        <InputText v-model="data.status" type="text" class="flex-auto" autocomplete="off" size="small"/>
+                    </div>
+                    <div class="flex flex-column">
+                        <label style="font-size: 12px">Data e hora</label>
+                        <InputText v-model="data.data" type="text" class="flex-auto" autocomplete="off" size="small"/>
+                    </div>
+                    <div class="flex flex-column">
+                        <label style="font-size: 12px">Origem</label>
+                        <InputText v-model="data.origem" type="text" class="flex-auto" autocomplete="off" size="small"/>
+                    </div>
+                </div>
+                <div class="flex flex-column mt-3">
+                    <label for="username" style="font-size: 12px">Descrição da atividade a ser feita</label>
+                    <Editor v-model="result" editor-style="height: 320px;">
+                        <template v-slot:toolbar>
+                        <span class="ql-formats editor">
+                            <button v-tooltip.bottom="'Negrito'" class="ql-bold"></button>
+                            <button v-tooltip.bottom="'Italico'" class="ql-italic"></button>
+                            <button v-tooltip.bottom="'Sublinhado'" class="ql-underline"></button>
+                            <button v-tooltip.bottom="'Gravar áudio'" @click="startRecording">
+                                <span class="pi pi-microphone" :class="{ 'listening': isListening }"/>
+                            </button>
+                            <button v-tooltip.bottom="'Parar gravação'" @click="stopRecording">
+                                <span class="pi pi-stop"/>
+                            </button>
+                            <button v-tooltip.bottom="'Limpar'" @click="clearText">
+                                <span class="pi pi-trash"/>
+                            </button>
+                        </span>
+                        </template>
+                    </Editor>
+                </div>
+            </div>
+            <template #footer>
+                <RealizaBtn label="SALVAR" icon="pi pi-save" @click="save(); visible = false"/>
+            </template>
+        </Dialog>
+    </div>
+</template>
+
+<script setup>
+import RealizaBtn from "~/components/realiza/RealizaBtn.vue";
+import {useSpeechRecognition} from '@vueuse/core';
+import Editor from 'primevue/editor'
+
+const visible = ref(false);
+
+const atividades = []
+
+let data = {
+    colaborador: '',
+    tipo: '',
+    status: '',
+    data: '',
+    origem: '',
+    descricao: ''
+}
+
+const defaultData = {
+    colaborador: '',
+    tipo: '',
+    status: '',
+    data: '',
+    origem: '',
+    descricao: ''
+}
+
+const {
+    isSupported,
+    isListening,
+    isFinal,
+    result,
+    start,
+    stop,
+} = useSpeechRecognition({
+    lang: 'pt-BR',
+    interimResults: true,
+    continuous: true,
+});
+
+const startRecording = () => {
+    start()
+};
+
+const stopRecording = () => {
+    stop();
+};
+
+const clearText = () => {
+    stop();
+    result.value = ''
+};
+
+const save = () => {
+    console.log('oi')
+    visible.value = false
+    data.descricao = result.value
+    atividades.push(data)
+    data = defaultData
+}
+</script>
+
+<style scoped>
+.info-title {
+    font-size: 10px;
+}
+
+.info-container {
+    display: flex;
+    flex-direction: column;
+    border: 1px solid #d1d0d0;
+    padding: 5px;
+    border-radius: 3px;
+}
+
+.listening {
+    border-radius: 50%;
+    box-shadow: 0 0 10px 5px #368742;
+    animation: pulse 2s infinite;
+}
+
+</style>

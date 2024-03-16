@@ -3,15 +3,15 @@
         <div class="flex justify-content-end">
             <RealizaBtn label="CRIAR ATIVIDADE" icon="pi pi-plus" @click="visible = true"/>
         </div>
-        <div v-if="atividades.length > 0" v-for="atividade in atividades" :key="atividade">
+        <div v-if="colaborador.length > 0">
             <Card >
                 <template #content>
                     <div style="background-color: #a3a0a0; color: black;" class="flex justify-content-between p-3 mb-5">
-                        <span>Status: {{atividade.status}}</span>
-                        <span>Responsável: {{atividade.colaborador}}</span>
+                        <span>Status: {{status}}</span>
+                        <span>Responsável: {{colaborador}}</span>
                     </div>
                     Descrição:
-                    <p v-html="atividade.descricao.value"/>
+                    <p v-html="result"/>
                 </template>
             </Card>
         </div>
@@ -25,25 +25,25 @@
             <div class="info-container">
                 <div class="flex flex-column">
                     <label style="font-size: 12px">Colaborador</label>
-                    <InputText v-model="data.colaborador" type="text" class="flex-auto" autocomplete="off"
+                    <InputText v-model="colaborador" type="text" class="flex-auto" autocomplete="off"
                                size="small"/>
                 </div>
                 <div class="flex w-full justify-content-between mt-3">
                     <div class="flex flex-column">
                         <label style="font-size: 12px">Tipo</label>
-                        <InputText v-model="data.tipo" type="text" class="flex-auto" autocomplete="off" size="small"/>
+                        <InputText v-model="tipo" type="text" class="flex-auto" autocomplete="off" size="small"/>
                     </div>
                     <div class="flex flex-column">
                         <label style="font-size: 12px">Status</label>
-                        <InputText v-model="data.status" type="text" class="flex-auto" autocomplete="off" size="small"/>
+                        <InputText v-model="status" type="text" class="flex-auto" autocomplete="off" size="small"/>
                     </div>
                     <div class="flex flex-column">
                         <label style="font-size: 12px">Data e hora</label>
-                        <InputText v-model="data.data" type="text" class="flex-auto" autocomplete="off" size="small"/>
+                        <InputText v-model="data" type="text" class="flex-auto" autocomplete="off" size="small"/>
                     </div>
                     <div class="flex flex-column">
                         <label style="font-size: 12px">Origem</label>
-                        <InputText v-model="data.origem" type="text" class="flex-auto" autocomplete="off" size="small"/>
+                        <InputText v-model="origem" type="text" class="flex-auto" autocomplete="off" size="small"/>
                     </div>
                 </div>
                 <div class="flex flex-column mt-3">
@@ -69,7 +69,7 @@
                 </div>
             </div>
             <template #footer>
-                <RealizaBtn label="SALVAR" icon="pi pi-save" @click="save(); visible = false"/>
+                <RealizaBtn label="SALVAR" icon="pi pi-save" @click="visible = false"/>
             </template>
         </Dialog>
     </div>
@@ -82,25 +82,11 @@ import Editor from 'primevue/editor'
 
 const visible = ref(false);
 
-const atividades = []
-
-let data = {
-    colaborador: '',
-    tipo: '',
-    status: '',
-    data: '',
-    origem: '',
-    descricao: ''
-}
-
-const defaultData = {
-    colaborador: '',
-    tipo: '',
-    status: '',
-    data: '',
-    origem: '',
-    descricao: ''
-}
+const colaborador = ref('')
+const tipo = ref('')
+const origem = ref('')
+const status = ref('')
+const data = ref('')
 
 const {
     isSupported,
@@ -127,14 +113,6 @@ const clearText = () => {
     stop();
     result.value = ''
 };
-
-const save = () => {
-    console.log('oi')
-    visible.value = false
-    data.descricao = result.value
-    atividades.push(data)
-    data = defaultData
-}
 </script>
 
 <style scoped>

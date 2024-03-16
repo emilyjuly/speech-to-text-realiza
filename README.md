@@ -6,5 +6,7 @@ Para executar:
 - Executar com npm run dev
 - Necessário node 20, caso tenha instalado, basta executar nvm use 20, para usar a versão 20 no projeto
 
+  Para acessar a demo <a href="https://speech-to-note-realiza.netlify.app/" target="_blank">clique aqui</a>
+
 
 
